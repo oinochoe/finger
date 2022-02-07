@@ -5,8 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finger Print Test</title>
+    <style>
+        button + * { margin-top: 10px; }
+    </style>
 </head>
 <body>
+<button type="button" id="login">당신의 정보를..</button>
+<div class="js-id"></div>
+<code class="js-time"></code>
 <script src="promise.polyfill.min.js"></script>
 <script>
     var fpPromise = new Promise(function (resolve, reject) {
@@ -17,15 +23,28 @@
         script.src = 'https://cdn.jsdelivr.net/npm/' + '@fingerprintjs/fingerprintjs-pro@3/dist/fp.min.js';
         document.head.appendChild(script);
     }).then(function () {
-        FingerprintJS.load({
+        return FingerprintJS.load({
             token: 'fROlvSXyazL9fSScAvww',
             region: 'ap'
-        })
+        });
     });
 
-    fpPromise
-        .then(function(fp){ fp.get() })
-        .then(function(result) { console.log(result.visitorId) });
+    document.getElementById('login').addEventListener('click', function () {
+        var d1 = new Date();
+        fpPromise.then(function (fp) {
+            return fp.get();
+        }).then(function (result) {
+            var d2 = new Date();
+            var timeString = "fingerprint 가져오기까지 걸린 시간: " + (d2 - d1) + "ms";
+            var visitorId = result.visitorId;
+            if (typeof window.console !== "undefined") {
+                console.log(timeString);
+                console.log(result);
+            }
+            document.querySelector('.js-id').innerText = visitorId;
+            document.querySelector('.js-time').innerText = timeString;
+        });
+    });
 </script>
 </body>
 </html>
