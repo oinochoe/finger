@@ -4,55 +4,47 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finger Print Test</title>
+    <title>Finger Print2 Test</title>
     <style>
         div { margin-top: 20px;}
     </style>
 </head>
 <body>
-<button type="button" id="login">당신의 정보를..</button>
-<div class="js-id"></div>
-<div class="js-time"></div>
-<div class="js-ip"></div>
-<div>
-    이전 방문 기록 : <span class="js-history"></span>
-</div>
-<script src="promise.polyfill.min.js"></script>
+<button type="button" id="login">핑거프린트2</button>
+<div id='fingerprint'></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/2.1.0/fingerprint2.min.js"></script>
 <script>
-    var fpPromise = new Promise(function (resolve, reject) {
-        var script = document.createElement('script');
-        script.onload = resolve;
-        script.onerror = reject;
-        script.async = true;
-        script.src = 'https://cdn.jsdelivr.net/npm/' + '@fingerprintjs/fingerprintjs-pro@3/dist/fp.min.js';
-        document.head.appendChild(script);
-    }).then(function () {
-        return FingerprintJS.load({
-            token: 'fROlvSXyazL9fSScAvww',
-            region: 'ap'
-        });
-    });
+    var fingerPrintEl = document.getElementById('fingerprint');
+    var fingerPrinting = function () {
+        Fingerprint2.get(function (components) {
+            console.log(components)
+            var result = Fingerprint2.x64hash128(components.map(function (pair) { return pair.value }).join(), 31);
+            var html = '';
 
-    document.getElementById('login').addEventListener('click', function () {
-        var d1 = new Date();
-        fpPromise.then(function (fp) {
-            return fp.get();
-        }).then(function (result) {
-            var d2 = new Date();
-            var timeString = "fingerprint 가져오기까지 걸린 시간: " + (d2 - d1) + "ms";
-            var visitorId = 'visitorId: ' + result.visitorId;
-            var ip = 'requestId: ' + result.requestId;
-            var isVisited = 'visitorFound: ' + result.visitorFound;
-            if (typeof window.console !== "undefined") {
-                console.log(timeString);
-                console.log(result);
-            }
-            document.querySelector('.js-id').innerText =  visitorId;
-            document.querySelector('.js-time').innerText = timeString;
-            document.querySelector('.js-ip').innerText = ip;
-            document.querySelector('.js-history').innerText = isVisited;
-        });
-    });
+            fingerPrintEl.innerHTML = result
+
+            // components.map(function (data, index) {
+            //     var $element = document.createElement('div');
+            //     var $element2 = document.createElement('div');
+            //     $element.innerText = data.key;
+            //     $element2.innerText = data.value;
+            //     html.innerHTML += $element;
+            //     html.innerHTML += $element2;
+            // })
+            // fingerPrintEl.innerHTML = html
+        })
+    }
+    // document.getElementById('login').addEventListener('click', function () {
+        if (window.requestIdleCallback) {
+            requestIdleCallback(function () {
+                fingerPrinting();
+            })
+        } else {
+            setTimeout(function () {
+                fingerPrinting();
+            }, 500)
+        }
+    // });
 </script>
 </body>
 </html>
