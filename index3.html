@@ -1,47 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko-KR">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finger Print2 Test</title>
+    <title>Finger Print3 Test</title>
     <style>
         div { margin-top: 20px;}
     </style>
 </head>
 <body>
-<button type="button" id="login">핑거프린트2</button>
-<div id='fingerprint'></div>
+<button type="button" id="login">핑거프린트3</button>
+<div id="fingerprint"></div>
+<div id="time"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/2.1.0/fingerprint2.min.js"></script>
 <script>
     var fingerPrintEl = document.getElementById('fingerprint');
-    var removeAttribute = ["screenResolution", "colorDepth", "availableScreenResolution"]
-    var fingerPrinting = function () {
+    var timeEl = document.getElementById('time');
+    var fingerPrinting = function (d1) {
         Fingerprint2.get(function (components) {
-            // components.shift();
-            for (var i = components.length - 1; 0 <= i; i--) {
-                if(-1 < removeAttribute.indexOf(components[i].key)) {
-                    components.splice(i, 1);
-                }
-            }
-            console.log(components)
+            var d2 = new Date();
+            var timeString = "fingerprint 가져오기까지 걸린 시간: " + (d2 - d1) + "ms";
             var result = Fingerprint2.x64hash128(components.map(function (pair) { return pair.value }).join(), 31);
             var html = '';
-
             fingerPrintEl.innerHTML = result
+            timeEl.innerHTML = timeString
         })
     }
-    // document.getElementById('login').addEventListener('click', function () {
+    document.getElementById('login').addEventListener('click', function () {
+        var d1 = new Date();
         if (window.requestIdleCallback) {
             requestIdleCallback(function () {
-                fingerPrinting();
+                fingerPrinting(d1);
             })
         } else {
             setTimeout(function () {
-                fingerPrinting();
+                fingerPrinting(d1);
             }, 500)
         }
-    // });
+    });
 </script>
 </body>
 </html>
