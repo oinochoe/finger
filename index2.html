@@ -15,8 +15,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/2.1.0/fingerprint2.min.js"></script>
 <script>
     var fingerPrintEl = document.getElementById('fingerprint');
+    var removeAttribute = ["useragent", "language", "audio", "webglVendorAndRenderer", "deviceMemory"]
     var fingerPrinting = function () {
         Fingerprint2.get(function (components) {
+            // components.shift();
+            for (var i = 0; i < components.length; i++) {
+                if(-1 < removeAttribute.indexOf(components[i].key.toLowerCase())) {
+                    components.splice(i, 1);
+                }
+            }
             console.log(components)
             var result = Fingerprint2.x64hash128(components.map(function (pair) { return pair.value }).join(), 31);
             var html = '';
