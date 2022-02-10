@@ -5,30 +5,55 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finger Print Test</title>
+    <style>
+        div { margin-top: 20px;}
+    </style>
 </head>
 <body>
+<button type="button" id="login">당신의 정보를..</button>
+<div class="js-id"></div>
+<div class="js-time"></div>
+<div class="js-ip"></div>
+<div>
+    이전 방문 기록 : <span class="js-history"></span>
+</div>
+<script src="promise.polyfill.min.js"></script>
 <script>
-    // Initialize the agent at application startup.
-    const fpPromise = new Promise((resolve, reject) => {
-        const script = document.createElement('script');
+    var fpPromise = new Promise(function (resolve, reject) {
+        var script = document.createElement('script');
         script.onload = resolve;
         script.onerror = reject;
         script.async = true;
         script.src = 'https://cdn.jsdelivr.net/npm/'
             + '@fingerprintjs/fingerprintjs-pro@3/dist/fp.min.js';
         document.head.appendChild(script);
-    }).then(() =>
-        FingerprintJS.load({
+    }).then(function () {
+        return FingerprintJS.load({
             token: 'fROlvSXyazL9fSScAvww',
-            region: 'ap',
-            endpoint: 'https://oinochoe.github.io'
-        })
-    );
+            region: 'ap'
+        });
+    });
 
-    // Get the visitor identifier when you need it.
-    fpPromise
-        .then(fp => fp.get())
-        .then(result => console.log(result.visitorId));
+    document.getElementById('login').addEventListener('click', function () {
+        var d1 = new Date();
+        fpPromise.then(function (fp) {
+            return fp.get();
+        }).then(function (result) {
+            var d2 = new Date();
+            var timeString = "fingerprint 가져오기까지 걸린 시간: " + (d2 - d1) + "ms";
+            var visitorId = 'visitorId: ' + result.visitorId;
+            var ip = 'requestId: ' + result.requestId;
+            var isVisited = 'visitorFound: ' + result.visitorFound;
+            if (typeof window.console !== "undefined") {
+                console.log(timeString);
+                console.log(result);
+            }
+            document.querySelector('.js-id').innerText =  visitorId;
+            document.querySelector('.js-time').innerText = timeString;
+            document.querySelector('.js-ip').innerText = ip;
+            document.querySelector('.js-history').innerText = isVisited;
+        });
+    });
 </script>
 </body>
 </html>

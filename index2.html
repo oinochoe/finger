@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finger Print2 Test</title>
+    <style>
+        div { margin-top: 20px;}
+    </style>
+</head>
+<body>
+<button type="button" id="login">핑거프린트2</button>
+<div id='fingerprint'></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/2.1.0/fingerprint2.min.js"></script>
+<script>
+    var fingerPrintEl = document.getElementById('fingerprint');
+    var options = {
+        fonts: { extendedJsFonts: true }
+        // , excludes: { screenResolution: true, colorDepth: true, availableScreenResolution: true }
+    }
+    var fingerPrinting = function () {
+        Fingerprint2.get(options, function (components) {
+            console.log(components)
+            var result = Fingerprint2.x64hash128(components.map(function (pair) { return pair.value }).join(), 31);
+            var html = '';
+            fingerPrintEl.innerHTML = result
+        })
+    }
+    document.getElementById('login').addEventListener('click', function () {
+        if (window.requestIdleCallback) {
+            requestIdleCallback(function () {
+                fingerPrinting();
+            })
+        } else {
+            setTimeout(function () {
+                fingerPrinting();
+            }, 500)
+        }
+    });
+</script>
+</body>
+</html>
