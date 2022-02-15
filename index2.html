@@ -17,7 +17,7 @@
     var fingerPrintEl = document.getElementById('fingerprint');
     var options = {
         fonts: { extendedJsFonts: true }
-        // , excludes: { screenResolution: true, colorDepth: true, availableScreenResolution: true }
+        // , excludes: { screenResolution: true, colorDepth: true, availableScreenResolution: true, touchSupport: true }
     }
     var fingerPrinting = function () {
         Fingerprint2.get(options, function (components) {
