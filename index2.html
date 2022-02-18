@@ -15,12 +15,17 @@
 <script src="fingerprint2.js"></script>
 <script>
     var fingerPrintEl = document.getElementById('fingerprint');
+    var removeAttribute = ["screenResolution", "availableScreenResolution"]
     var options = {
         fonts: { extendedJsFonts: true }
-        // , excludes: { screenResolution: true, colorDepth: true, availableScreenResolution: true, touchSupport: true }
     }
     var fingerPrinting = function () {
         Fingerprint2.get(options, function (components) {
+            for (var i = components.length - 1; 0 <= i; i--) {
+                if (-1 < removeAttribute.indexOf(components[i].key)) {
+                    components.splice(i, 1);
+                }
+            }
             console.log(components)
             var result = Fingerprint2.x64hash128(components.map(function (pair) { return pair.value }).join(), 31);
             var html = '';
